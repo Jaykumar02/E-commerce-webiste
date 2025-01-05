@@ -2,55 +2,74 @@
   <!-- Filter and Search Section -->
   <div class="dashboard-nav">
     <!-- Search Bar -->
-    <input
-      type="text"
-      placeholder="Search by Order ID or Product Name"
-      [(ngModel)]="searchQuery"
-      (input)="applyFilters()"
+    <input 
+      type="text" 
+      placeholder="Search by Order ID or Product Name" 
+      [(ngModel)]="searchQuery" 
+      (input)="applyFilters()" 
     />
 
     <!-- Date Range Filters -->
-    <label>
-      Start Date:
+    <label> 
+      Start Date: 
       <input type="date" [(ngModel)]="startDate" (change)="applyFilters()" />
-    </label>
-    <label>
-      End Date:
+    </label> 
+    <label> 
+      End Date: 
       <input type="date" [(ngModel)]="endDate" (change)="applyFilters()" />
-    </label>
+    </label> 
 
     <!-- Status Filter Buttons -->
-    <button (click)="filterOrders('PLACED')">Placed</button>
-    <button (click)="filterOrders('OUT_FOR_DELIVERY')">Out for Delivery</button>
-    <button (click)="filterOrders('DELIVERED')">Delivered</button>
-    <button (click)="filterOrders('CANCELLED')">Cancelled</button>
-  </div>
+    <button (click)="filterOrders('PLACED')">Placed</button> 
+    <button (click)="filterOrders('OUT_FOR_DELIVERY')">Out for Delivery</button> 
+    <button (click)="filterOrders('DELIVERED')">Delivered</button> 
+    <button (click)="filterOrders('CANCELLED')">Cancelled</button> 
+
+    <!-- Items per page selector -->
+    <div class="form-group">
+      <label for="itemsPerPage">Items per page:</label>
+      <select id="itemsPerPage" class="form-select ms-2" style="width: auto; display: inline-block;" 
+              [(ngModel)]="itemsPerPage" (change)="changeItemsPerPage()">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+    </div>
+  </div> 
 
   <!-- Orders Table -->
-  <table class="orders-table">
-    <thead>
-      <tr>
-        <th>Order ID</th>
-        <th>Total Amount</th>
-        <th>Status</th>
-        <th>Order Date</th>
-        <th>Products</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let order of paginatedOrders">
-        <td>{{ order.orderId }}</td>
-        <td>${{ order.totalAmount }}</td>
-        <td>{{ order.status }}</td>
-        <td>{{ order.orderDate | date: 'medium' }}</td>
-        <td>{{ order.productNames }}</td>
-        <td>
-          <button (click)="viewOrderDetails(order)">View Details</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <table class="orders-table"> 
+    <thead> 
+      <tr> 
+        <th>Order ID</th> 
+        <th>Total Amount</th> 
+        <th>Status</th> 
+        <th>Order Date</th> 
+        <th>Actions</th> 
+      </tr> 
+    </thead> 
+    <tbody> 
+      <tr *ngFor="let order of paginatedOrders"> 
+        <td>{{ order.orderId }}</td> 
+        <td>${{ order.totalAmount }}</td> 
+        <td>{{ order.status }}</td> 
+        <td>{{ order.orderDate | date: 'medium' }}</td> 
+        <td> 
+          <button (click)="viewOrderDetails(order)">View Order Details</button> 
+          <button (click)="viewCustomerDetails(order)">View Customer Details</button> 
+
+          <!-- Conditional buttons based on order status -->
+          <ng-container *ngIf="order.status !== 'OUT_FOR_DELIVERY'">
+            <button (click)="loadDeliveryAgents(order)">Assign Delivery Agent</button>
+          </ng-container>
+          <ng-container *ngIf="order.status === 'OUT_FOR_DELIVERY'">
+            <button (click)="viewDeliveryAgent(order)">View Delivery Agent</button>
+          </ng-container>
+        </td> 
+      </tr> 
+    </tbody> 
+  </table> 
 
   <!-- Pagination Controls -->
   <div class="pagination-container">
@@ -58,4 +77,131 @@
     <span>{{ currentPage }} of {{ totalPages }}</span>
     <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">Next</button>
   </div>
+
+  <!-- Modal for Order Details -->
+  <div class="modal" tabindex="-1" id="orderDetailsModal" [ngClass]="{ 'show': isModalVisible }" [style.display]="isModalVisible ? 'block' : 'none'" aria-hidden="!isModalVisible">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Order Details</h5>
+          <button type="button" class="btn-close" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <div *ngIf="selectedOrder">
+            <p><strong>Order ID:</strong> {{ selectedOrder.orderId }}</p>
+            <p><strong>Total Amount:</strong> ${{ selectedOrder.totalAmount }}</p>
+            <p><strong>Status:</strong> {{ selectedOrder.status }}</p>
+            <p><strong>Order Date:</strong> {{ selectedOrder.orderDate | date: 'medium' }}</p>
+            <p><strong>Products:</strong> {{ selectedOrder.productNames }}</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Modal for Delivery Agent List -->
+<div class="modal" tabindex="-1" id="deliveryAgentModal" [ngClass]="{ 'show': isAgentModalVisible }" [style.display]="isAgentModalVisible ? 'block' : 'none'" aria-hidden="!isAgentModalVisible">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Select a Delivery Agent</h5>
+        <button type="button" class="btn-close" (click)="closeAgentModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="deliveryAgents.length > 0">
+          <h5>Select Delivery Agent:</h5>
+          <div *ngFor="let agent of deliveryAgents">
+            <!-- Each delivery agent now has an 'Assign to' button -->
+            <button type="button" (click)="assignDeliveryAgentToOrder(agent)" class="agent-button">
+              <div>
+                <strong>{{ agent.firstname || 'No First Name' }} {{ agent.lastname || 'No Last Name' }}</strong><br />
+                <em>{{ agent.email }}</em><br />
+                <span>Contact: {{ agent.contactNumber }}</span><br />
+                <span>Vehicle: {{ agent.vehicleType }} - {{ agent.vehicleNumber }}</span>
+              </div>
+              <!-- Add "Assign to" button -->
+              <span>Assign to</span>
+            </button>
+          </div>
+        </div>
+        <div *ngIf="deliveryAgents.length === 0">
+          <p>No delivery agents available.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+  <!-- Modal for Customer Details -->
+  <div class="modal" tabindex="-1" id="customerDetailsModal" [ngClass]="{ 'show': isCustomerModalVisible }" [style.display]="isCustomerModalVisible ? 'block' : 'none'" aria-hidden="!isCustomerModalVisible">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Customer Details</h5>
+          <button type="button" class="btn-close" (click)="closeCustomerModal()"></button>
+        </div>
+        <div class="modal-body">
+          <div *ngIf="selectedCustomer">
+            <p><strong>Name:</strong> {{ selectedCustomer.firstName }} {{ selectedCustomer.lastName }}</p>
+            <p><strong>Email:</strong> {{ selectedCustomer.email }}</p>
+            <p><strong>Contact Number:</strong> {{ selectedCustomer.contactNumber || 'N/A' }}</p>
+            <p><strong>Alternate Contact:</strong> {{ selectedCustomer.alternateContactNumber || 'N/A' }}</p>
+            <p><strong>Address:</strong> {{ selectedCustomer.address || 'N/A' }}</p>
+            <p><strong>City:</strong> {{ selectedCustomer.city || 'N/A' }}</p>
+            <p><strong>State:</strong> {{ selectedCustomer.state || 'N/A' }}</p>
+            <p><strong>Pincode:</strong> {{ selectedCustomer.pincode || 'N/A' }}</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeCustomerModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal for Delivery Agent Details -->
+<!-- Modal for Delivery Agent Details -->
+<div class="modal" tabindex="-1" id="deliveryAgentModal" [ngClass]="{ 'show': isAgentModalVisible }" [style.display]="isAgentModalVisible ? 'block' : 'none'" aria-hidden="!isAgentModalVisible">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delivery Agent Details</h5>
+        <button type="button" class="btn-close" (click)="closeAgentModal()"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Check if there is a delivery agent assigned -->
+        <div *ngIf="selectedOrder?.deliveryAgent; else noAgentAssigned">
+          <p><strong>Name:</strong> 
+            {{ selectedOrder.deliveryAgent.firstname || 'No First Name' }} 
+            {{ selectedOrder.deliveryAgent.lastname || 'No Last Name' }}
+          </p>
+          <p><strong>Email:</strong> {{ selectedOrder.deliveryAgent.email || 'No Email' }}</p>
+          <p><strong>Contact:</strong> {{ selectedOrder.deliveryAgent.contactNumber || 'No Contact' }}</p>
+          <p><strong>Vehicle:</strong> {{ selectedOrder.deliveryAgent.vehicleType }} - {{ selectedOrder.deliveryAgent.vehicleNumber }}</p>
+          <p><strong>Delivery Zone:</strong> {{ selectedOrder.deliveryAgent.deliveryZone || 'No Zone' }}</p>
+        </div>
+
+        <!-- If no delivery agent is assigned -->
+        <ng-template #noAgentAssigned>
+          <p>No delivery agent has been assigned yet.</p>
+        </ng-template>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeAgentModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+  
+
+
 </div>
