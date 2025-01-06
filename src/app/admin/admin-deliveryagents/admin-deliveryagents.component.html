@@ -162,6 +162,7 @@
 </div>
 
 
+
 <!-- Modal for Adding Delivery Agent -->
 <div class="modal fade" id="addAgentModal" tabindex="-1" aria-labelledby="addAgentModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -257,18 +258,19 @@
           </div>
 
           <!-- Vehicle Type -->
-          <div class="mb-3">
-            <label for="vehicleTypeInput" class="form-label">Vehicle Type</label>
-            <input 
-              type="text" 
-              class="form-control"
-              [ngClass]="{'is-invalid': f['vehicleType'].touched && f['vehicleType'].invalid}"
-              id="vehicleTypeInput" 
-              formControlName="vehicleType">
-            <div class="invalid-feedback" *ngIf="f['vehicleType'].touched && f['vehicleType'].invalid">
-              {{ getErrorMessage('vehicleType') }}
-            </div>
-          </div>
+         <!-- Vehicle Type (for Add Agent) -->
+<div class="mb-3">
+  <label for="vehicleTypeInputAdd" class="form-label">Vehicle Type</label>
+  <input 
+    type="text" 
+    class="form-control"
+    [ngClass]="{'is-invalid': f['vehicleType'].touched && f['vehicleType'].invalid}"
+    id="vehicleTypeInputAdd" 
+    formControlName="vehicleType">
+  <div class="invalid-feedback" *ngIf="f['vehicleType'].touched && f['vehicleType'].invalid">
+    {{ getErrorMessage('vehicleType') }}
+  </div>
+</div>
 
           <!-- Vehicle Number -->
           <div class="mb-3">
@@ -322,7 +324,7 @@
               A valid email is required.
             </div>
           </div>
-          
+         
           <div class="mb-3">
             <label for="zoneInput" class="form-label">Zone</label>
             <input type="text" class="form-control" id="zoneInput" formControlName="zone">
@@ -338,10 +340,15 @@
             </div>
           </div>
           <div class="mb-3">
-            <label for="vehicleTypeInput" class="form-label">Vehicle Type</label>
-            <input type="text" class="form-control" id="vehicleTypeInput" formControlName="vehicleType">
-            <div *ngIf="agentForm.get('vehicleType')?.touched && agentForm.get('vehicleType')?.invalid" class="text-danger">
-              Vehicle type is required.
+            <label for="vehicleTypeInputEdit" class="form-label">Vehicle Type</label>
+            <input 
+              type="text" 
+              class="form-control"
+              [ngClass]="{'is-invalid': f['vehicleType'].touched && f['vehicleType'].invalid}"
+              id="vehicleTypeInputEdit" 
+              formControlName="vehicleType">
+            <div class="invalid-feedback" *ngIf="f['vehicleType'].touched && f['vehicleType'].invalid">
+              {{ getErrorMessage('vehicleType') }}
             </div>
           </div>
           <div class="mb-3">
@@ -351,7 +358,7 @@
               Vehicle number is required.
             </div>
           </div>
-          <button type="submit" class="btn btn-primary" [disabled]="agentForm.invalid">Update Agent</button>
+          <button type="submit" class="btn btn-primary" >Update Agent</button>
         </form>
       </div>
     </div>

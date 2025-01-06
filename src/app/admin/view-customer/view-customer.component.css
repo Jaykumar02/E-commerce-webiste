@@ -1,26 +1,266 @@
-.table {
-    font-size: 0.9rem;
+:root {
+  --primary-green: #28a745;
+  --primary-green-hover: #218838;
+  --primary-blue: #0d6efd;
+  --danger-red: #dc3545;
+  --warning-orange: #ffc107;
+  --text-dark: #2c3e50;
+  --border-color: #dee2e6;
+  --background-light: #f8f9fa;
+}
+
+.container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 24px auto;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.header-section {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--background-light);
+  border-radius: 8px;
+}
+
+h3 {
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 24px;
+  margin: 0;
+}
+
+.search-input {
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  padding: 12px 16px;
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.btn-add-product {
+  background-color: var(--primary-green);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  color: white;
+}
+
+.btn-add-product:hover {
+  background-color: var(--primary-green-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+}
+
+.product-table {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.product-table thead {
+  background-color: var(--background-light);
+}
+
+.product-table thead th {
+  color: var(--text-dark);
+  font-weight: 600;
+  padding: 16px;
+  border-bottom: 2px solid var(--border-color);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.action-buttons {
+  gap: 8px;
+}
+
+.action-buttons .btn {
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+/* Button Group Styles */
+.btn-group {
+  display: flex;
+  gap: 10px; /* Adds space between buttons */
+  flex-wrap: wrap; /* Allows wrapping if the buttons are too wide */
+}
+
+/* Base button styling for smooth and modern buttons */
+.btn-custom {
+  font-size: 16px;
+  padding: 8px 16px;
+  border-radius: 5px; /* Rounded corners for smoothness */
+  cursor: pointer;
+  transition: all 0.3s ease; /* Smooth transition effect */
+  border: 1px solid transparent;
+}
+
+/* View Button */
+.btn-view {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-view:hover {
+  background-color: #0056b3;
+  opacity: 0.8;
+}
+
+/* Edit Button */
+.btn-edit {
+  background-color: #e0a800 ;
+  color: #343a40;
+}
+
+.btn-edit:hover {
+  background-color: #ffc107;
+  opacity: 0.8;
+}
+
+/* Delete Button */
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+  opacity: 0.8;
+}
+
+/* Focus and Active states for accessibility */
+.btn-view:focus, .btn-edit:focus, .btn-delete:focus {
+  outline: 2px solid rgba(0, 123, 255, 0.5); 
+  outline-offset: 2px;
+}
+
+.btn-view:active, .btn-edit:active, .btn-delete:active {
+  transform: scale(0.98); 
+}
+
+
+.custom-pagination {
+  margin-top: 24px;
+}
+
+.custom-pagination .page-link {
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  color: var(--text-dark);
+  margin: 0 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.custom-pagination .page-link:hover {
+  background-color: var(--background-light);
+  color: var(--primary-green);
+  border-color: var(--primary-green);
+}
+
+.custom-pagination .active .page-link {
+  background-color: var(--primary-green);
+  border-color: var(--primary-green);
+  color: white;
+}
+
+.items-per-page {
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 6px 12px;
+}
+
+.custom-modal .modal-content {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+.custom-modal .modal-header {
+  background-color: var(--background-light);
+  border-bottom: 1px solid var(--border-color);
+  border-radius: 12px 12px 0 0;
+  padding: 16px 24px;
+}
+
+.custom-modal .modal-title {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 1060;
+}
+
+.custom-toast {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: none;
+}
+
+.custom-toast .toast-header {
+  background-color: var(--primary-green);
+  color: white;
+  border-radius: 8px 8px 0 0;
+}
+
+/* Hover effects for interactive elements */
+.product-table tbody tr:hover {
+  background-color: var(--background-light);
+}
+
+.btn-view:hover {
+  background-color: #0b5ed7;
+}
+
+.btn-edit:hover {
+  background-color: #ffca2c;
+}
+
+.btn-delete:hover {
+  background-color: #bb2d3b;
+}
+
+@media (max-width: 768px) {
+  .container {
+      padding: 16px;
+      margin: 16px;
   }
-  
-  thead th {
-    text-transform: uppercase;
+
+  .action-buttons {
+      flex-direction: column;
   }
-  
-  .btn-info {
-    color: white;
-    background-color: var(--primary-color);
-    border: none;
+
+  .product-table td, 
+  .product-table th {
+      padding: 12px;
+      font-size: 13px;
   }
-  
-  .btn-info:hover {
-    background-color: var(--secondary-color);
+
+  .search-input {
+      width: 150px !important;
   }
-  
-  .pagination .page-link {
-    color: var(--primary-color);
+
+  .btn-add-product {
+      padding: 8px 16px;
   }
-  
-  .pagination .page-item.active .page-link {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-  }
+}

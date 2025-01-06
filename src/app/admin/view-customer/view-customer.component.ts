@@ -9,12 +9,12 @@ import { CustomerDetails, ViewCustomerservicesService } from 'src/app/services/a
 export class ViewCustomerComponent implements OnInit {
   customers: CustomerDetails[] = [];
   filteredCustomers: CustomerDetails[] = [];
-  currentPage = 0;
+  currentPage = 1   ;
   totalPages = 0;
   selectedCustomer: CustomerDetails | null = null;
   searchTerm: string = '';
   totalCustomers = 0;
-  itemsPerPage = 10; // Default value for items per page
+  itemsPerPage = 5; // Default value for items per page
 
   constructor(private customerService: ViewCustomerservicesService) {}
 

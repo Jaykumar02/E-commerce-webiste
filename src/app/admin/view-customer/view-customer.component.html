@@ -1,7 +1,5 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,25 +9,24 @@
 
 <body>
   <div class="container mt-4">
-    <h3 class="mb-4">Customer List</h3>
-  
+
     <!-- Search Bar -->
-    <div class="d-flex mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3>All Customers</h3>
       <input
         type="text"
         class="form-control me-2"
         placeholder="Search by name, email, city, or state"
         [(ngModel)]="searchTerm"
         (input)="searchCustomers()"
+        style="width: 300px;"
       />
-      <button class="btn btn-primary" (click)="searchCustomers()">Search</button>
     </div>
-  
-    <table class="table caption-top">
-      <caption>List of Customers</caption>
-      <thead class="table-dark">
+
+    <table class="table">
+      <thead>
         <tr>
-          <th scope="col">#</th>
+          <th scope="col">Sr no.</th>
           <th scope="col">Name</th>
           <th scope="col">Email</th>
           <th scope="col">City</th>
@@ -38,47 +35,28 @@
       </thead>
       <tbody>
         <tr *ngFor="let customer of filteredCustomers; let i = index">
-          <th scope="row">{{ currentPage * 10 + i + 1 }}</th>
+          <th scope="row">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</th>
           <td>{{ customer.firstName }} {{ customer.lastName }}</td>
           <td>{{ customer.email }}</td>
           <td>{{ customer.city }}</td>
           <td>
-            <button
-              class="btn btn-primary btn-sm"
-              data-bs-toggle="modal"
-              data-bs-target="#customerModal"
-              (click)="viewDetails(customer)"
-            >
-              View
-            </button>
+            <div class="btn-group">
+              <button
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#customerModal"
+                (click)="viewDetails(customer)"
+              >
+                View
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>
     </table>
 
-    <!-- show item per page -->
-    <div class="form-group mb-3">
-      <label for="itemsPerPage">Items per page:</label>
-      <select
-        id="itemsPerPage"
-        class="form-select ms-2"
-        style="width: auto; display: inline-block;"
-        [(ngModel)]="itemsPerPage"
-        (change)="onItemsPerPageChange()"
-      >
-        <option value="5">5</option>
-        <option value="10">10</option>
-        <option value="20">20</option>
-        <option value="50">50</option>
-      </select>
-    </div>
-    
-  
     <!-- Pagination Controls -->
-    <div class="d-flex justify-content-between align-items-center mt-3">
-      <div>
-        Showing {{ currentPage * 10 + 1 }} to {{ currentPage * 10 + customers.length }} of total entries
-      </div>
+    <div class="pagination justify-content-center">
       <nav aria-label="Customer list pagination">
         <ul class="pagination mb-0">
           <li class="page-item" [class.disabled]="currentPage === 0">
@@ -90,14 +68,33 @@
               <button class="page-link" (click)="onPageChange(i)">{{ i + 1 }}</button>
             </li>
           </ng-container>
-  
+
           <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
             <button class="page-link" (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages - 1">Next</button>
           </li>
         </ul>
       </nav>
     </div>
-  
+
+    <!-- Items per page control -->
+    <div class="d-flex justify-content-center mt-3">
+      <div class="form-group">
+        <label for="itemsPerPage">Items per page:</label>
+        <select
+          id="itemsPerPage"
+          class="form-select ms-2"
+          style="width: auto; display: inline-block;"
+          [(ngModel)]="itemsPerPage"
+          (change)="onItemsPerPageChange()"
+        >
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+        </select>
+      </div>
+    </div>
+
     <!-- Modal for Viewing Customer Details -->
     <div class="modal fade" id="customerModal" tabindex="-1" aria-labelledby="customerModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -147,5 +144,4 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
