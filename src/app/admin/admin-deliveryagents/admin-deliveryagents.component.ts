@@ -69,6 +69,7 @@ export class AdminDeliveryagentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchDeliveryAgents();
+  
   }
 
   // Fetch the delivery agents
@@ -147,15 +148,21 @@ export class AdminDeliveryagentsComponent implements OnInit {
   // Populate the form with the agent data for editing
   populateModal(agent: any): void {
     this.selectedAgent = agent;
+    console.log(agent);
+    console.log(this.selectedAgent);
+    
+
+    
     this.agentForm.patchValue({
       firstName: agent.firstname,
       lastName: agent.lastname,
       email: agent.email,
-      password: '',  // Keep password empty for edit (optional)
       deliveryZone: agent.deliveryZone, 
+      password: '',  // Keep password empty for edit (optional)
       contactNumber: agent.contactNumber,
       vehicleType: agent.vehicleType,
       vehicleNumber: agent.vehicleNumber
+      
     });
   }
   
@@ -214,6 +221,12 @@ export class AdminDeliveryagentsComponent implements OnInit {
   
     this.deliveryAgentService.updateDeliveryAgent(updatedAgent).subscribe({
       next: (response) => {
+        console.log(response);
+        console.log(updatedAgent);
+        console.log(this.agentForm);
+        
+        
+
         const index = this.deliveryAgents.findIndex(agent => agent.id === updatedAgent.id);
         if (index !== -1) {
           this.deliveryAgents[index] = response;
@@ -231,15 +244,48 @@ export class AdminDeliveryagentsComponent implements OnInit {
   }
   // Handle deleting a delivery agent
   deleteDeliveryAgent(agentId: number): void {
+    console.log("Deleting agent with id:", agentId);
+  
     this.deliveryAgentService.deleteDeliveryAgent(agentId).subscribe({
       next: () => {
+        console.log("Agent deleted successfully");
+  
+        // Remove agent from main array
         this.deliveryAgents = this.deliveryAgents.filter(agent => agent.id !== agentId);
-        this.filterAgents(); // Reapply search filter after deleting
+        console.log("hi");
+        
+        // Update filtered agents and refresh the view
+        this.filterAgents(); // This will properly update filteredAgents based on current search term
+        console.log("hi1");
+        // Force recalculation of pagination
+        this.totalItems = this.filteredAgents.length;
+        this.calculatePages();
+        console.log("hi2");
+        
+        // If current page is empty after deletion, go to previous page
+        const currentPageItems = this.paginatedAgents;
+        if (currentPageItems.length === 0 && this.currentPage > 1) {
+          this.currentPage--;
+        }
+        console.log("hi3");
+  
         alert('Agent deleted successfully!');
+        this.fetchDeliveryAgents();
       },
       error: (error) => {
+        console.log("Error during deletion");
         console.error('Error deleting delivery agent:', error);
+        
+        if (error.error?.message) {
+          console.error('Error message:', error.error.message);
+          alert(error.error.message);
+        } else {
+          alert('Failed to delete agent. Please try again.');
+        }
       }
     });
+    
   }
+  
+
 }

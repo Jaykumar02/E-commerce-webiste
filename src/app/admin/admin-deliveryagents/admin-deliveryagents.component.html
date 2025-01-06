@@ -327,8 +327,8 @@
          
           <div class="mb-3">
             <label for="zoneInput" class="form-label">Zone</label>
-            <input type="text" class="form-control" id="zoneInput" formControlName="zone">
-            <div *ngIf="agentForm.get('zone')?.touched && agentForm.get('zone')?.invalid" class="text-danger">
+            <input type="text" class="form-control" id="zoneInput" formControlName="deliveryZone">
+            <div *ngIf="agentForm.get('deliveryZone')?.touched && agentForm.get('deliveryZone')?.invalid" class="text-danger">
               Zone is required.
             </div>
           </div>

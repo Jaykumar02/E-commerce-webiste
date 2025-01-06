@@ -23,10 +23,11 @@ export class OrdersDashboardComponent implements OnInit {
 
   deliveryAgents: any[] = [];  // Store delivery agents
   selectedDeliveryAgentId: number | null = null;  // Store selected delivery agent ID
-  isAgentModalVisible: boolean = false;  // Control delivery agent modal visibility
+  isAgentModalVisibleAssign: boolean = false;  // Control delivery agent modal visibility
 
   selectedCustomer: any | null = null; // Store selected customer details
   isCustomerModalVisible: boolean = false;  // Control customer details modal visibility
+  isAgentModalVisible: boolean = false; // Control agent modal visibility
 
   constructor(private orderService: OrderservicesService) {}
 
@@ -128,7 +129,7 @@ export class OrdersDashboardComponent implements OnInit {
     
     this.orderService.getDeliveryAgentsByOrderLocation(order.orderId).subscribe((agents: any[]) => {
       this.deliveryAgents = agents; // Store the available agents
-      this.isAgentModalVisible = false; // Show the delivery agent modal
+      this.isAgentModalVisibleAssign = true; // Show the delivery agent modal
     });
   }
 
@@ -200,7 +201,7 @@ assignDeliveryAgentToOrder(agent: any): void {
 
   // Close the delivery agent modal
   closeAgentModal(): void {
-    this.isAgentModalVisible = false;  // Close the delivery agent modal
+    this.isAgentModalVisibleAssign = false;  // Close the delivery agent modal
   }
 
    closeCustomerModal(): void {

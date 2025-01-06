@@ -15,6 +15,7 @@ import { AdminProductsComponent } from './admin-products/admin-products.componen
 import { AdminCategoryComponent } from './admin-category/admin-category.component';
 import { AdminDeliveryagentsComponent } from './admin-deliveryagents/admin-deliveryagents.component';
 import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { ViewCustomerComponent } from './view-customer/view-customer.component';
 import { AdminFooterComponent } from './admin-footer/admin-footer.component';
 
@@ -34,7 +35,8 @@ import { AdminFooterComponent } from './admin-footer/admin-footer.component';
     RouterModule,
     OrdersModule,
     AppRoutingModule,
-    FormsModule, // Add FormsModule for form validation
+    FormsModule,
+    ReactiveFormsModule // Add FormsModule for form validation
     
     
   ],
