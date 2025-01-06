@@ -24,14 +24,14 @@ export class AdminDeliveryagentsComponent implements OnInit {
 
   // Reactive form for adding/editing agents
   agentForm: FormGroup = this.fb.group({
-    firstName: ['', [Validators.required]],
-    lastName: ['', [Validators.required]],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    deliveryZone: ['', [Validators.required]],  // Changed from zone to deliveryZone
-    contactNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-    vehicleType: ['', [Validators.required]],
-    vehicleNumber: ['', [Validators.required, Validators.pattern('^[A-Z0-9 ]+$')]]
+    firstName: ['', [Validators.required]],  // Required for editing
+    lastName: ['', [Validators.required]],   // Required for editing
+    email: ['', [Validators.required, Validators.email]],  // Required for editing
+    password: ['', [Validators.minLength(6)]], // Optional for editing (if updated)
+    deliveryZone: ['', [Validators.required]],  // Required for editing
+    contactNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],  // Required for editing
+    vehicleType: ['', [Validators.required]],  // Required for editing
+    vehicleNumber: ['', [Validators.required, Validators.pattern('^[A-Z0-9 ]+$')]]  // Required for editing
   });
 
   // Add getters for form controls to simplify template code
@@ -151,13 +151,14 @@ export class AdminDeliveryagentsComponent implements OnInit {
       firstName: agent.firstname,
       lastName: agent.lastname,
       email: agent.email,
-      password: '',  // Keep password empty for edit
-      deliveryZone: agent.deliveryZone,  // Match the field name with the form control
+      password: '',  // Keep password empty for edit (optional)
+      deliveryZone: agent.deliveryZone, 
       contactNumber: agent.contactNumber,
       vehicleType: agent.vehicleType,
       vehicleNumber: agent.vehicleNumber
     });
   }
+  
 
   addDeliveryAgent(): void {
     if (this.agentForm.invalid) {
@@ -202,12 +203,15 @@ export class AdminDeliveryagentsComponent implements OnInit {
   // Handle updating an existing delivery agent
   updateDeliveryAgent(): void {
     if (this.agentForm.invalid || !this.selectedAgent) return;
-
+  
+    // If password is not changed, set it to the current password
+    const formData = this.agentForm.value;
     const updatedAgent = { 
       ...this.selectedAgent, 
-      ...this.agentForm.value 
+      ...formData,
+      password: formData.password || this.selectedAgent.password  // Retain the old password if not updated
     };
-
+  
     this.deliveryAgentService.updateDeliveryAgent(updatedAgent).subscribe({
       next: (response) => {
         const index = this.deliveryAgents.findIndex(agent => agent.id === updatedAgent.id);
@@ -217,13 +221,14 @@ export class AdminDeliveryagentsComponent implements OnInit {
         }
         this.resetForm();
         alert('Agent updated successfully!');
+        `$('#editAgentModal').modal('hide')`; // Close the modal after successful update
       },
       error: (error) => {
         console.error('Error updating delivery agent:', error);
+        alert('Failed to update agent. Please try again.');
       }
     });
   }
-
   // Handle deleting a delivery agent
   deleteDeliveryAgent(agentId: number): void {
     this.deliveryAgentService.deleteDeliveryAgent(agentId).subscribe({
